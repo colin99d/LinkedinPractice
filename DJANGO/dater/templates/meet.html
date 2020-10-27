@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'pages/meet.css' %}">
+</head>
+<a href="{% url 'home' %}">Edit Profile</a>
+<a href="{% url 'chat' %}">Chat</a>
+<h1>Meet People</h1>
+
+<br>
+{% for user in userInfo %}
+	{% if currgen != user.gender and user.user.id not in user_ids and user.user.id not in hater_ids %}
+		<div class="profile">
+			<h2>{{ user.user }} Age:{{ user.birthdate }}</h2>
+			<img class="profile-pic" src="{{ user.userImg.url }}">
+			<p>{{ user.bio}}</p>
+			<form class ='react' method = 'POST'>{% csrf_token %}<button id='like' name='like' type='submit' value={{user.user.id}}>Like</button></form>
+			<form class ='react' method = 'POST'>{% csrf_token %}<button id='dislike' name='dislike' type='submit' value={{user.user.id}}>Dislike</button></form>
+		</div>
+	{% endif %}
+{% endfor %}
+
+
+{% endblock content %}
+
+

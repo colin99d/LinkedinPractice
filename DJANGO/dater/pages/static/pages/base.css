@@ -1,0 +1,15 @@
+#left { 
+        float:left;  
+        width:85%; 
+        height:100px; 
+            } 
+
+#right { 
+        float:right; 
+        width:15%; 
+        height:100px; 
+	}
+.heading {
+	background: lightgreen;
+	}
+	

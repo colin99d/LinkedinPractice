@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{% url 'home' %}">Edit Profile</a>
+<h1>Meet People</h1>
+
+<br>
+{% for user in userInfo %}
+	{% if currgen != user.gender %}
+		<div>
+			<img class="profile-pic" src="{{ user.userImg.url }}">
+			<h2>{{ user.user }} Age:{{ user.birthdate }}</h2>
+			<p>{{ user.bio}}</p>
+			<form action='actionUrl' method='GET'><button type='submit'> sort me</button></form>
+			<form action='actionUrl' method='GET'><button type='submit'> sort me</button></form>
+		</div>
+	{% endif %}
+{% endfor %}
+
+
+{% endblock content %}
+
+

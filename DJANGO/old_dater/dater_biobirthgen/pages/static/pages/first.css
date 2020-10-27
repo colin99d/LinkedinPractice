@@ -1,0 +1,40 @@
+.button {
+  font: bold 30px Arial;
+  text-decoration: none;
+  background-color: lightgreen;
+  color: #333333;
+  padding: 2px 6px 2px 6px;
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+  display: inline-block;
+  width: 10%;
+  height: 10%;
+  margin-left: 50%;
+}
+
+.bg {
+  /* The image used */
+  background-image: url("first-background.jpg");
+
+  /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; 
+  position: relative;
+  top: 80px;
+
+}
+
+body, html {
+  height: 100%;
+}
+
+h1 {
+  text-align: center;
+  color: white;
+}

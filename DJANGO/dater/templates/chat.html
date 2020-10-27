@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'pages/chat.css' %}">
+</head>
+<a href="{% url 'meet' %}">Meet People</a>
+<h1>Chat with Matches</h1>
+
+<br>
+{% for match in matchInfo %}
+	<div class="profile">
+		<h3>{{match}}</h3>
+	</div>
+{% endfor %}
+
+
+{% endblock content %}
+
+

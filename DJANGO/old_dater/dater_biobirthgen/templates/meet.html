@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{% url 'home' %}">Edit Profile</a>
+<h1>Meet People</h1>
+
+<br>
+{% for user in userInfo %}
+	{% if currgen != user.gender %}
+		<h2>{{ user.user }} Age:{{ user.birthdate }}</h2>
+		<p>{{ user.bio}}</p>
+	{% endif %}
+{% endfor %}
+
+
+{% endblock content %}
+
+

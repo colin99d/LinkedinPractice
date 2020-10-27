@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{% url 'home' %}">Edit Profile</a>
+<h1>Meet People</h1>
+
+
+<br>
+{% for user in userInfo %}
+	<h2>{{ user.username }}-{{ user.age }}  posted by: {{ user.gender }}</h2>
+{% endfor %}
+
+
+{% endblock content %}
+
+

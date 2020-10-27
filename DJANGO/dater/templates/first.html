@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'pages/first.css' %}">
+</head>
+<body>
+<div class="bg">
+<h1>Welcome to SAMs Meet</h1>
+	<a class="button" href="{% url 'login' %}">Log In</a>
+	<a class="button" href="{% url 'signup' %}">Sign Up</a>
+</div>
+</body>
+{% endblock content %}

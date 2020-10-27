@@ -1,0 +1,21 @@
+<head>
+	<title>S.A.Ms MEET</title>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'pages/base.css' %}">
+</head>
+
+<header>
+	<div id="left" class="heading">
+		<a href="{% url 'about' %}">About</a>
+	</div>
+	<div id="right" class="heading">
+		<h3>S.A.Ms MEET</h3>
+		{% if user.is_authenticated %}
+  			<p>{{request.user.username}}<a href="{% url 'logout' %}">logout</a></p>
+		{% else %}
+			<p>Not logged in</p>
+		{% endif %}
+	</div>
+</header>
+{% block content %}
+{% endblock %}
