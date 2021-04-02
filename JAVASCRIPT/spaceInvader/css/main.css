@@ -124,6 +124,7 @@ footer {
 
 .shopItem {
   display: inline-block;
+  padding: 10px;
 }
 
 .purchaseItems {
@@ -131,7 +132,7 @@ footer {
 }
 
 .menu {
-  display: none;
+  display: "block";
   position: absolute;
   background: blue;
   color: white;

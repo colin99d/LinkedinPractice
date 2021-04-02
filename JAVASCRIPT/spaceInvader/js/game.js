@@ -1,3 +1,5 @@
+//Reducing lines of code. Starting: 368 Before Consolidation: 350
+const $container = document.querySelector(".game");
 const menuPlay = document.querySelectorAll('.menuPlay')
 const menuShop = document.querySelectorAll('.menuShop')
 
@@ -7,12 +9,7 @@ const KEY_CODE_SPACE = 32;
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
-
-var PLAYER_LIVES = 1;
 const PLAYER_WIDTH = 20;
-var PLAYER_MAX_SPEED = 200.0;
-const LASER_MAX_SPEED = 300.0;
-var LASER_COOLDOWN = 1;
 
 var ENEMIES_PER_ROW = 2;
 var ENEMIES_PER_COLUMN = 2;
@@ -35,16 +32,16 @@ const GAME_STATE = {
   enemies: [],
   enemyLasers: [],
   gameOver: false,
-  costs: {"speed": 2, "fire": 2, "health": 2}
+  upgrades: {
+    health: {value: 1, cost: 2, name: "Health", upgradeAmt: 1.08},
+    fire: {value: 1, cost: 2, name: "Reload", upgradeAmt: 0.9},
+    speed: {value: 200, cost: 2, name: "Speed", upgradeAmt: 1.08},
+    laserVelocity: {value: 300, cost: 2, name: "Velocity", upgradeAmt: 1.08}
+  }
 };
 
 function rectsIntersect(r1, r2) {
-  return !(
-    r2.left > r1.right ||
-    r2.right < r1.left ||
-    r2.top > r1.bottom ||
-    r2.bottom < r1.top
-  );
+  return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
 }
 
 function setPosition(el, x, y) {
@@ -67,29 +64,49 @@ function rand(min, max) {
   return min + Math.random() * (max - min);
 }
 
-function createPlayer($container) {
-  GAME_STATE.playerX = GAME_WIDTH / 2;
-  GAME_STATE.playerY = GAME_HEIGHT - 50;
-  const $player = document.createElement("img");
-  $player.src = "img/player-blue-1.png";
-  $player.className = "player gameObject";
-  $container.appendChild($player);
-  setPosition($player, GAME_STATE.playerX, GAME_STATE.playerY);
+function create(type, x, y, src) {
+  const $element = document.createElement("img");
+  $element.src = src;
+  $element.className = "gameObject "+type
+  $container.appendChild($element);
+  setPosition($element, x, y)
+  if(type == "player") {
+    GAME_STATE.playerX = x
+    GAME_STATE.playerY = y
+  } else if (type == "laser") {
+    GAME_STATE.lasers.push({x, y, $element })
+    new Audio("sound/sfx-laser1.ogg").play();
+  } else if (type == "enemy") {
+    GAME_STATE.enemies.push({x, y, cooldown: rand(0.5, ENEMY_COOLDOWN), $element});
+  } else if (type == "enemy-laser") {
+    GAME_STATE.enemyLasers.push({x, y, $element })
+  }
 }
 
-function destroyPlayer($container, player) {
+function destroyPlayer(player) {
   $container.removeChild(player);
   GAME_STATE.gameOver = true;
-  const audio = new Audio("sound/sfx-lose.ogg");
-  //audio.play();
+  new Audio("sound/sfx-lose.ogg").play();
 }
 
-function updatePlayer(dt, $container) {
+function destroyLaser(laser) {
+  $container.removeChild(laser.$element);
+  laser.isDead = true;
+}
+
+function destroyEnemy(enemy) {
+  GAME_STATE.coins += 1;
+  document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
+  $container.removeChild(enemy.$element);
+  enemy.isDead = true;
+}
+
+function updatePlayer(dt) {
   if (GAME_STATE.leftPressed) {
-    GAME_STATE.playerX -= dt * PLAYER_MAX_SPEED;
+    GAME_STATE.playerX -= dt * GAME_STATE.upgrades.speed.value;
   }
   if (GAME_STATE.rightPressed) {
-    GAME_STATE.playerX += dt * PLAYER_MAX_SPEED;
+    GAME_STATE.playerX += dt * GAME_STATE.upgrades.speed.value;
   }
 
   GAME_STATE.playerX = clamp(
@@ -99,8 +116,8 @@ function updatePlayer(dt, $container) {
   );
 
   if (GAME_STATE.spacePressed && GAME_STATE.playerCooldown <= 0) {
-    createLaser($container, GAME_STATE.playerX, GAME_STATE.playerY);
-    GAME_STATE.playerCooldown = LASER_COOLDOWN;
+    create("laser", GAME_STATE.playerX, GAME_STATE.playerY, "img/laser-blue-1.png");
+    GAME_STATE.playerCooldown = GAME_STATE.upgrades.fire.value;
   }
   if (GAME_STATE.playerCooldown > 0) {
     GAME_STATE.playerCooldown -= dt;
@@ -110,25 +127,13 @@ function updatePlayer(dt, $container) {
   setPosition(player, GAME_STATE.playerX, GAME_STATE.playerY);
 }
 
-function createLaser($container, x, y) {
-  const $element = document.createElement("img");
-  $element.src = "img/laser-blue-1.png";
-  $element.className = "laser gameObject";
-  $container.appendChild($element);
-  const laser = { x, y, $element };
-  GAME_STATE.lasers.push(laser);
-  const audio = new Audio("sound/sfx-laser1.ogg");
-  audio.play();
-  setPosition($element, x, y);
-}
-
-function updateLasers(dt, $container) {
+function updateLasers(dt) {
   const lasers = GAME_STATE.lasers;
   for (let i = 0; i < lasers.length; i++) {
     const laser = lasers[i];
-    laser.y -= dt * LASER_MAX_SPEED;
+    laser.y -= dt * GAME_STATE.upgrades.laserVelocity.value;
     if (laser.y < 0) {
-      destroyLaser($container, laser);
+      destroyLaser(laser);
     }
     setPosition(laser.$element, laser.x, laser.y);
     const r1 = laser.$element.getBoundingClientRect();
@@ -139,8 +144,8 @@ function updateLasers(dt, $container) {
       const r2 = enemy.$element.getBoundingClientRect();
       if (rectsIntersect(r1, r2)) {
         // Enemy was hit
-        destroyEnemy($container, enemy);
-        destroyLaser($container, laser);
+        destroyEnemy(enemy);
+        destroyLaser(laser);
         break;
       }
     }
@@ -148,27 +153,7 @@ function updateLasers(dt, $container) {
   GAME_STATE.lasers = GAME_STATE.lasers.filter(e => !e.isDead);
 }
 
-function destroyLaser($container, laser) {
-  $container.removeChild(laser.$element);
-  laser.isDead = true;
-}
-
-function createEnemy($container, x, y) {
-  const $element = document.createElement("img");
-  $element.src = "img/enemy-blue-1.png";
-  $element.className = "enemy gameObject";
-  $container.appendChild($element);
-  const enemy = {
-    x,
-    y,
-    cooldown: rand(0.5, ENEMY_COOLDOWN),
-    $element
-  };
-  GAME_STATE.enemies.push(enemy);
-  setPosition($element, x, y);
-}
-
-function updateEnemies(dt, $container) {
+function updateEnemies(dt) {
   const dx = Math.sin(GAME_STATE.lastTime / 1000.0) * 50;
   const dy = Math.cos(GAME_STATE.lastTime / 1000.0) * 10;
 
@@ -180,37 +165,20 @@ function updateEnemies(dt, $container) {
     setPosition(enemy.$element, x, y);
     enemy.cooldown -= dt;
     if (enemy.cooldown <= 0) {
-      createEnemyLaser($container, x, y);
+      create("enemy-laser", x, y, "img/laser-red-5.png");
       enemy.cooldown = ENEMY_COOLDOWN;
     }
   }
   GAME_STATE.enemies = GAME_STATE.enemies.filter(e => !e.isDead);
 }
 
-function destroyEnemy($container, enemy) {
-  GAME_STATE.coins += 1;
-  document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
-  $container.removeChild(enemy.$element);
-  enemy.isDead = true;
-}
-
-function createEnemyLaser($container, x, y) {
-  const $element = document.createElement("img");
-  $element.src = "img/laser-red-5.png";
-  $element.className = "enemy-laser gameObject";
-  $container.appendChild($element);
-  const laser = { x, y, $element };
-  GAME_STATE.enemyLasers.push(laser);
-  setPosition($element, x, y);
-}
-
-function updateEnemyLasers(dt, $container) {
+function updateEnemyLasers(dt) {
   const lasers = GAME_STATE.enemyLasers;
   for (let i = 0; i < lasers.length; i++) {
     const laser = lasers[i];
-    laser.y += dt * LASER_MAX_SPEED;
+    laser.y += dt * GAME_STATE.upgrades.laserVelocity.value;
     if (laser.y > GAME_HEIGHT) {
-      destroyLaser($container, laser);
+      destroyLaser(laser);
     }
     setPosition(laser.$element, laser.x, laser.y);
     const r1 = laser.$element.getBoundingClientRect();
@@ -218,7 +186,7 @@ function updateEnemyLasers(dt, $container) {
     const r2 = player.getBoundingClientRect();
     if (rectsIntersect(r1, r2)) {
       // Player was hit
-      destroyPlayer($container, player);
+      destroyPlayer(player);
       break;
     }
   }
@@ -236,16 +204,14 @@ function hardenEnemies() {
 
 function init() {
   document.querySelector(".roundCounter").innerHTML = "Round: " + GAME_STATE.round;
-  const $container = document.querySelector(".game");
-  createPlayer($container);
+  create("player", GAME_WIDTH / 2, GAME_HEIGHT - 50, "img/player-blue-1.png");
   hardenEnemies();
-  console.log(ENEMY_COOLDOWN);
   const enemySpacing = (GAME_WIDTH - ENEMY_HORIZONTAL_PADDING * 2) / (ENEMIES_PER_ROW - 1);
   for (let j = 0; j < ENEMIES_PER_COLUMN; j++) {
     const y = ENEMY_VERTICAL_PADDING + j * ENEMY_VERTICAL_SPACING;
     for (let i = 0; i < ENEMIES_PER_ROW; i++) {
       const x = i * enemySpacing + ENEMY_HORIZONTAL_PADDING;
-      createEnemy($container, x, y);
+      create("enemy", x, y, "img/enemy-blue-1.png");
     }
   }
 }
@@ -269,11 +235,10 @@ function update() {
     document.querySelector(".congratulations").style.display = "block";
     return;
   }
-  const $container = document.querySelector(".game");
-  updatePlayer(dt, $container);
-  updateLasers(dt, $container);
-  updateEnemies(dt, $container);
-  updateEnemyLasers(dt, $container);
+  updatePlayer(dt);
+  updateLasers(dt);
+  updateEnemies(dt);
+  updateEnemyLasers(dt);
 
   GAME_STATE.lastTime = currentTime;
   window.requestAnimationFrame(update);
@@ -306,7 +271,6 @@ function endGame() {
   window.cancelAnimationFrame(update);
   window.removeEventListener("keydown", onKey);
   window.removeEventListener("keyup", onKey);
-  const $container = document.querySelector(".game");
   var destroyObjects = document.querySelectorAll(".gameObject")
   for (let i=0 ; i < destroyObjects.length; i++) {
     $container.removeChild(destroyObjects[i])
@@ -325,45 +289,34 @@ function seeShop() {
 }
 
 function shopHandler(attribute) {
-  if (GAME_STATE.coins >= GAME_STATE.costs[attribute]) {
-    GAME_STATE.coins -= GAME_STATE.costs[attribute]
-    GAME_STATE.costs[attribute] += 2
-    console.log(GAME_STATE.costs[attribute])
-
-    if (attribute == "speed") {
-      PLAYER_MAX_SPEED += 30;
-      document.querySelector(".speedFrame").innerHTML = PLAYER_MAX_SPEED;
-      document.querySelector(".speedButton").innerHTML = GAME_STATE.costs.speed;
-      document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
-    } else if (attribute == "fire") {
-      if (LASER_COOLDOWN > 0.1) {
-        LASER_COOLDOWN -= 0.1
-        document.querySelector(".fireFrame").innerHTML = LASER_COOLDOWN;
-        document.querySelector(".fireButton").innerHTML = GAME_STATE.costs.fire;
-        document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
-      }
-    } else if (attribute == "health") {
-      PLAYER_LIVES += 1
-      document.querySelector(".healthFrame").innerHTML = PLAYER_LIVES
-      document.querySelector(".healthButton").innerHTML = GAME_STATE.costs.health;
-      document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
-    }
+  if (GAME_STATE.coins >= GAME_STATE.upgrades[attribute].cost) {
+    GAME_STATE.coins -= GAME_STATE.upgrades[attribute].cost
+    GAME_STATE.upgrades[attribute].cost+= 2
+    GAME_STATE.upgrades[attribute].value *= GAME_STATE.upgrades[attribute].upgradeAmt
+    document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
+    document.querySelector("."+attribute+"Frame").innerHTML = GAME_STATE.upgrades[attribute].value;
+    document.querySelector("."+attribute+"Button").innerHTML = GAME_STATE.upgrades[attribute].cost;
   }
 }
 
-document.querySelector(".speedButton").addEventListener("click",() => shopHandler("speed"))
-document.querySelector(".speedButton").innerHTML = GAME_STATE.costs.speed
-document.querySelector(".fireButton").addEventListener("click",() => shopHandler("fire"))
-document.querySelector(".fireButton").innerHTML = GAME_STATE.costs.fire
-document.querySelector(".healthButton").addEventListener("click",() => shopHandler("health"))
-document.querySelector(".healthButton").innerHTML = GAME_STATE.costs.health
+const shopDiv = document.querySelector(".purchaseItems")
+Object.keys(GAME_STATE.upgrades).forEach(item => {
+  var $element1 = document.createElement("div");
+  $element1.className = "shopItem "+item
+  var $element2 = document.createElement("p")
+  $element2.innerHTML = GAME_STATE.upgrades[item].name
+  var $element3 = document.createElement("button")
+  $element3.addEventListener("click",() => shopHandler(item))
+  $element3.innerHTML = GAME_STATE.upgrades[item].cost
+  $element3.className = item+"Button"
+  var $element4 = document.createElement("div");
+  $element4.className = "displayFrame "+item+"Frame"
+  $element4.innerHTML = GAME_STATE.upgrades[item].value
+  shopDiv.appendChild($element1)
+  $element1.appendChild($element2)
+  $element1.appendChild($element3)
+  $element1.appendChild($element4)
+})
 
-document.querySelector(".speedFrame").innerHTML = PLAYER_MAX_SPEED;
-document.querySelector(".fireFrame").innerHTML = LASER_COOLDOWN;
-document.querySelector(".healthFrame").innerHTML = PLAYER_LIVES;
-
-document.querySelector(".menu").style.display = "block";
 menuPlay.forEach(item => item.addEventListener("click", startGame));
 menuShop.forEach(item => item.addEventListener("click", seeShop));
-
-
