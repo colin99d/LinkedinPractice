@@ -1,5 +1,5 @@
-const menuPlay = document.querySelector('.menuPlay')
-const menuShop = document.querySelector('.menuShop')
+const menuPlay = document.querySelectorAll('.menuPlay')
+const menuShop = document.querySelectorAll('.menuShop')
 
 const KEY_CODE_LEFT = 37;
 const KEY_CODE_RIGHT = 39;
@@ -8,21 +8,22 @@ const KEY_CODE_SPACE = 32;
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 
+var PLAYER_LIVES = 1;
 const PLAYER_WIDTH = 20;
 var PLAYER_MAX_SPEED = 200.0;
 const LASER_MAX_SPEED = 300.0;
 var LASER_COOLDOWN = 1;
 
-const ENEMIES_PER_ROW = 10;
-const ENEMIES_PER_COLUMN = 3;
+var ENEMIES_PER_ROW = 2;
+var ENEMIES_PER_COLUMN = 2;
 const ENEMY_HORIZONTAL_PADDING = 80;
 const ENEMY_VERTICAL_PADDING = 70;
 const ENEMY_VERTICAL_SPACING = 80;
-const ENEMY_COOLDOWN = 5.0;
+var ENEMY_COOLDOWN = 5.0;
 
 const GAME_STATE = {
   round: 1,
-  active: false,
+  coins: 0,
   lastTime: Date.now(),
   leftPressed: false,
   rightPressed: false,
@@ -33,7 +34,8 @@ const GAME_STATE = {
   lasers: [],
   enemies: [],
   enemyLasers: [],
-  gameOver: false
+  gameOver: false,
+  costs: {"speed": 2, "fire": 2, "health": 2}
 };
 
 function rectsIntersect(r1, r2) {
@@ -186,6 +188,8 @@ function updateEnemies(dt, $container) {
 }
 
 function destroyEnemy($container, enemy) {
+  GAME_STATE.coins += 1;
+  document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
   $container.removeChild(enemy.$element);
   enemy.isDead = true;
 }
@@ -220,13 +224,22 @@ function updateEnemyLasers(dt, $container) {
   }
   GAME_STATE.enemyLasers = GAME_STATE.enemyLasers.filter(e => !e.isDead);
 }
-
+function hardenEnemies() {
+  if(GAME_STATE.round % 5 == 0) {
+    ENEMIES_PER_COLUMN += 1
+  } else if (GAME_STATE.round % 3 == 0) {
+    ENEMIES_PER_ROW += 1
+  } else {
+    ENEMY_COOLDOWN *= 0.9
+  }
+}
 
 function init() {
-  document.querySelector(".shop").style.display = "none";
+  document.querySelector(".roundCounter").innerHTML = "Round: " + GAME_STATE.round;
   const $container = document.querySelector(".game");
   createPlayer($container);
-
+  hardenEnemies();
+  console.log(ENEMY_COOLDOWN);
   const enemySpacing = (GAME_WIDTH - ENEMY_HORIZONTAL_PADDING * 2) / (ENEMIES_PER_ROW - 1);
   for (let j = 0; j < ENEMIES_PER_COLUMN; j++) {
     const y = ENEMY_VERTICAL_PADDING + j * ENEMY_VERTICAL_SPACING;
@@ -237,25 +250,25 @@ function init() {
   }
 }
 
-function playerHasWon() {
-  return GAME_STATE.enemies.length === 0;
-}
-
-function update(e) {
+function update() {
   const currentTime = Date.now();
   const dt = (currentTime - GAME_STATE.lastTime) / 1000.0;
-
   if (GAME_STATE.gameOver) {
-    document.querySelector(".menu").style.display = "block";
     endGame()
+    round = 1;
+    ENEMIES_PER_COLUMN = 2;
+    ENEMIES_PER_ROW = 2;
+    ENEMY_COOLDOWN = 5;
+    document.querySelector(".menu").style.display = "block";
     return;
   }
 
-  if (playerHasWon()) {
+  if (GAME_STATE.enemies.length === 0) {
+    endGame()
+    GAME_STATE.round += 1;
     document.querySelector(".congratulations").style.display = "block";
     return;
   }
-
   const $container = document.querySelector(".game");
   updatePlayer(dt, $container);
   updateLasers(dt, $container);
@@ -266,45 +279,44 @@ function update(e) {
   window.requestAnimationFrame(update);
 }
 
-function onKeyDown(e) {
+function onKey(e) {
+  var action = e.type
   if (e.keyCode === KEY_CODE_LEFT) {
-    GAME_STATE.leftPressed = true;
+    GAME_STATE.leftPressed = action=="keydown";
   } else if (e.keyCode === KEY_CODE_RIGHT) {
-    GAME_STATE.rightPressed = true;
+    GAME_STATE.rightPressed = action=="keydown";
   } else if (e.keyCode === KEY_CODE_SPACE) {
-    GAME_STATE.spacePressed = true;
-  }
-}
-
-function onKeyUp(e) {
-  if (e.keyCode === KEY_CODE_LEFT) {
-    GAME_STATE.leftPressed = false;
-  } else if (e.keyCode === KEY_CODE_RIGHT) {
-    GAME_STATE.rightPressed = false;
-  } else if (e.keyCode === KEY_CODE_SPACE) {
-    GAME_STATE.spacePressed = false;
+    GAME_STATE.spacePressed = action=="keydown";
   }
 }
 
 //The below code focuses on functions outside of the actual game
 function startGame() {
+  document.querySelector(".congratulations").style.display = "none";
+  document.querySelector(".shop").style.display = "none";
   document.querySelector(".menu").style.display = "none";
-  GAME_STATE.active = true;
   init();
   window.requestAnimationFrame(update);
-  window.addEventListener("keydown", onKeyDown);
-  window.addEventListener("keyup", onKeyUp);
+  window.addEventListener("keydown", onKey);
+  window.addEventListener("keyup", onKey);
 }
 
 function endGame() {
+  GAME_STATE.gameOver = false;
+  window.cancelAnimationFrame(update);
+  window.removeEventListener("keydown", onKey);
+  window.removeEventListener("keyup", onKey);
   const $container = document.querySelector(".game");
   var destroyObjects = document.querySelectorAll(".gameObject")
   for (let i=0 ; i < destroyObjects.length; i++) {
     $container.removeChild(destroyObjects[i])
   }
-  GAME_STATE.lasers = []
-  GAME_STATE.enemies = []
-  GAME_STATE.enemyLasers = []
+  GAME_STATE.lasers = [];
+  GAME_STATE.enemies = [];
+  GAME_STATE.enemyLasers = [];
+  GAME_STATE.leftPressed = false;
+  GAME_STATE.rightPressed = false;
+  GAME_STATE.spacePressed = false;
 }
 
 function seeShop() {
@@ -312,8 +324,46 @@ function seeShop() {
   document.querySelector(".shop").style.display = "block";
 }
 
+function shopHandler(attribute) {
+  if (GAME_STATE.coins >= GAME_STATE.costs[attribute]) {
+    GAME_STATE.coins -= GAME_STATE.costs[attribute]
+    GAME_STATE.costs[attribute] += 2
+    console.log(GAME_STATE.costs[attribute])
+
+    if (attribute == "speed") {
+      PLAYER_MAX_SPEED += 30;
+      document.querySelector(".speedFrame").innerHTML = PLAYER_MAX_SPEED;
+      document.querySelector(".speedButton").innerHTML = GAME_STATE.costs.speed;
+      document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
+    } else if (attribute == "fire") {
+      if (LASER_COOLDOWN > 0.1) {
+        LASER_COOLDOWN -= 0.1
+        document.querySelector(".fireFrame").innerHTML = LASER_COOLDOWN;
+        document.querySelector(".fireButton").innerHTML = GAME_STATE.costs.fire;
+        document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
+      }
+    } else if (attribute == "health") {
+      PLAYER_LIVES += 1
+      document.querySelector(".healthFrame").innerHTML = PLAYER_LIVES
+      document.querySelector(".healthButton").innerHTML = GAME_STATE.costs.health;
+      document.querySelector(".coinsCounter").innerHTML = "Coins: " + GAME_STATE.coins;
+    }
+  }
+}
+
+document.querySelector(".speedButton").addEventListener("click",() => shopHandler("speed"))
+document.querySelector(".speedButton").innerHTML = GAME_STATE.costs.speed
+document.querySelector(".fireButton").addEventListener("click",() => shopHandler("fire"))
+document.querySelector(".fireButton").innerHTML = GAME_STATE.costs.fire
+document.querySelector(".healthButton").addEventListener("click",() => shopHandler("health"))
+document.querySelector(".healthButton").innerHTML = GAME_STATE.costs.health
+
+document.querySelector(".speedFrame").innerHTML = PLAYER_MAX_SPEED;
+document.querySelector(".fireFrame").innerHTML = LASER_COOLDOWN;
+document.querySelector(".healthFrame").innerHTML = PLAYER_LIVES;
+
 document.querySelector(".menu").style.display = "block";
-menuPlay.addEventListener("click", startGame);
-menuShop.addEventListener("click", seeShop);
+menuPlay.forEach(item => item.addEventListener("click", startGame));
+menuShop.forEach(item => item.addEventListener("click", seeShop));
 
 
