@@ -1,0 +1,24 @@
+tr {
+    text-align: center;
+    font-weight: bold;
+    font-size: 30px;
+    user-select: none;
+}
+
+.block-unknown {
+    width: 6vw;
+    height: 8vh;
+    background-color: lightgreen;
+}
+
+.block-known {
+    width: 6vw;
+    height: 8vh;
+    background-color: burlywood;
+}
+
+.block-bomb {
+    width: 6vw;
+    height: 8vh;
+    background-color: red;
+}
