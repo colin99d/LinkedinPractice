@@ -35,8 +35,9 @@ class App extends Component {
     this.setState({squares:squares})
   }
 
-  getCount(coord, surrounding){
-    var original = [... this.state.squares]
+  getCount(coord){
+    var original = [...this.state.squares]
+    var surrounding = [];
     for (let i=-1; i<2; i++){
       for (let j=-1; j<2; j++) {
         if(coord[0]+i >= 0 && coord[0]+i <= 9 && coord[1]+j >= 0 && coord[1]+j <= 9 && !(i === 0 && j === 0)) {
@@ -53,15 +54,20 @@ class App extends Component {
     }
     original[coord[0]][coord[1]][1] = count
     this.setState({squares:original})
-    return surrounding
+    return [count, surrounding]
   }
 
   handleClick(coord) {
-    var original = [... this.state.squares]
-    var items;
+    var original = [...this.state.squares]
     if (original[coord[0]][coord[1]][0] === 0) {
       original[coord[0]][coord[1]][0] = 2;
-      items = this.getCount(coord);
+      var [count, surrounding] = this.getCount(coord, surrounding);
+      if(count === 0) {
+        for(let i=0; i<surrounding.length; i++) {
+          var newCount = this.getCount(surrounding[i])
+          
+        }
+      } 
     } else if (original[coord[0]][coord[1]][0] === 1) {
       original[coord[0]][coord[1]][0] = 3;
     }
@@ -85,7 +91,7 @@ class App extends Component {
                   <Block key={idx+"-"+idx2} type={this.state.squares[idx][idx2][0]} coords={[idx,idx2]} handleClick={this.handleClick} count={this.state.squares[idx][idx2][1]}/>
                 )}
               </tr>
-            ) : ""}
+            ) : null}
           </tbody>
         </table>
       </div>
