@@ -1,0 +1,227 @@
+<html lang="en"><head>
+    {% load static %}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="/idp/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <title>IU Login: Indiana University</title>
+    <script link="js/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
+      <!--[if lt IE 9]>
+      <script src="js/html5.js"></script>
+      <![endif]-->
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+</head>
+<body class="login">
+  <header class="header">
+    <div class="centered lockup">
+      <div class="trident">
+        <svg class="trident-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 48" style="enableBackground: new 0 0 41 48; max-height: 58px" aria-describedby="iu-logo">
+          <switch>
+            <g>
+              <title id="iu-logo">Indiana University Trident</title>
+              <rect width="41" height="48" fill="#900"></rect>
+              <polygon points="24.59 12.64 24.59 14.98 26.34 14.98 26.34 27.78 22.84 27.78 22.84 10.9 24.59 10.9 24.59 8.57 16.41 8.57 16.41 10.9 18.16 10.9 18.16 27.78 14.66 27.78 14.66 14.98 16.41 14.98 16.41 12.64 8.22 12.64 8.22 14.98 9.97 14.98 9.97 30.03 12.77 33.02 18.16 33.02 18.16 36.52 16.41 36.52 16.41 39.43 24.59 39.43 24.59 36.52 22.84 36.52 22.84 33.02 28 33.02 31.01 30.03 31.01 14.98 32.78 14.98 32.78 12.64 24.59 12.64" fill="#fff"></polygon>
+            </g>
+          </switch>
+        </svg>
+      </div>
+        <div class="lockup-group">
+          <p class="lockup-iu">
+            Indiana University
+          </p>
+          <h1 class="lockup-title">
+            Login
+         </h1>
+        </div>
+      <div class="lockup-tabs" role="tablist" aria-label="Login options">
+        <button id="tab-university" class="tab" role="tab" aria-selected="true" aria-controls="tab-university" data-tab="university-view" onclick="showUniversity()">
+          University
+        </button>
+        <button id="tab-guest" class="tab" role="tab" aria-selected="false" tabindex="-1" aria-controls="tab-guest" data-tab="guest-view" onclick="setCookieTab('guest'); checkCookie()">
+            Guest
+        </button>
+      </div>
+    </div>
+  </header>
+  <main class="content" role="main">
+    <section id="university-view" class="centered base" role="tabpanel" aria-labelledby="tab-university" tabindex="0">
+
+      <form id="fm1" method="post">
+        {% csrf_token %}
+        <div class="username">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocorrect="off" autocapitalize="off" size="25" autocomplete="off" aria-invalid="" htmlescape="true" value="">
+        </div>
+        <div id="at-alert" class="alert--input info hide">
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" focusable="false">
+            <g fill="currentColor">
+              <path d="M8,16a8,8,0,1,1,8-8A8,8,0,0,1,8,16ZM8,2a6,6,0,1,0,6,6A6,6,0,0,0,8,2Z"></path>
+              <path d="M8,12a1,1,0,0,1-1-1V8A1,1,0,0,1,9,8v3A1,1,0,0,1,8,12Z"></path>
+              <circle cx="8" cy="5" r="1"></circle>
+            </g>
+          </svg>
+          <span class="alert--input-message" aria-live="polite">
+            To log in as a Guest, click the <b>Guest tab</b> above.
+          </span>
+        </div>
+        <div id="at-alert-no-guest" class="alert--input warning hide">
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" focusable="false">
+            <g fill="currentColor">
+              <path d="M11,9H5A1,1,0,0,1,5,7h6a1,1,0,0,1,0,2Z"></path>
+              <path d="M8,16a8,8,0,1,1,8-8A8,8,0,0,1,8,16ZM8,2a6,6,0,1,0,6,6A6,6,0,0,0,8,2Z"></path>
+            </g>
+          </svg>
+          <span class="alert--input-message" aria-live="polite">
+              This looks like a <a href="https://kb.iu.edu/d/alqt" target="_blank" rel="noopener noreferrer">Guest account</a> login, but this application <strong>does not support</strong> Guest accounts.
+          </span>
+        </div>
+        <div id="id-alert" class="alert--input warning hide">
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" focusable="false">
+            <g fill="currentColor">
+              <path d="M11,9H5A1,1,0,0,1,5,7h6a1,1,0,0,1,0,2Z"></path>
+              <path d="M8,16a8,8,0,1,1,8-8A8,8,0,0,1,8,16ZM8,2a6,6,0,1,0,6,6A6,6,0,0,0,8,2Z"></path>
+            </g>
+          </svg>
+          <span class="alert--input-message" aria-live="polite">
+            This looks like a <a href="https://kb.iu.edu/d/amuh" id="uid-link" target="_blank" rel="noopener noreferrer">University ID</a>. Try entering your <a href="https://kb.iu.edu/d/ajgc" id="username-link" target="_blank" rel="noopener noreferrer">username</a>.
+          </span>
+        </div>
+        <div id="iu-alert" class="alert--input warning hide">
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" focusable="false">
+            <g fill="currentColor">
+              <path d="M11,9H5A1,1,0,0,1,5,7h6a1,1,0,0,1,0,2Z"></path>
+              <path d="M8,16a8,8,0,1,1,8-8A8,8,0,0,1,8,16ZM8,2a6,6,0,1,0,6,6A6,6,0,0,0,8,2Z"></path>
+            </g>
+          </svg>
+          <span class="alert--input-message" aria-live="polite">
+            Remove <b id="iu-email"></b> to log in with a <a href="https://kb.iu.edu/d/beml" target="_blank" rel="noopener noreferrer">University account</a>.
+          </span>
+        </div>
+        <div id="iuh-alert" class="alert--input info hide">
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" focusable="false">
+            <g fill="currentColor">
+              <path d="M8,16a8,8,0,1,1,8-8A8,8,0,0,1,8,16ZM8,2a6,6,0,1,0,6,6A6,6,0,0,0,8,2Z"></path>
+              <path d="M8,12a1,1,0,0,1-1-1V8A1,1,0,0,1,9,8v3A1,1,0,0,1,8,12Z"></path>
+              <circle cx="8" cy="5" r="1"></circle>
+            </g>
+          </svg>
+          <span class="alert--input-message" aria-live="polite">
+            To log in with an IU Health account, click the <strong>Health</strong> tab above.
+          </span>
+        </div>
+        <div class="passphrase">
+          <label for="password">Passphrase</label>
+          <input class="signin__field signin__field--pass required" id="password" name="password" type="password" value="" autocorrect="off" autocapitalize="off" size="25" autocomplete="off">
+        </div>
+        <div class="cta">
+          <button id="login-button" class="button" type="submit">Log in</button>
+        </div>
+
+      </form>
+      <div class="help">
+        <a id="reset-help" href="https://one.iu.edu/launch-task/iu/reset-my-passphrase" target="_blank" rel="noopener noreferrer">
+          <svg data-name="Sync icon" xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <title>Reset passphrase icon</title>
+            <path fill="currentColor" d="M13.93,1a1,1,0,0,0-1,1V3A7,7,0,0,0,1.41,5.67,1,1,0,0,0,2,6.94a1,1,0,0,0,1.28-.61A5,5,0,0,1,12,5H10a1,1,0,0,0,0,2h3.52a1,1,0,0,0,.17,0l.15,0h.13a1,1,0,0,0,1-1V2A1,1,0,0,0,13.93,1Z"></path>
+            <path fill="currentColor" d="M14,9.06a1,1,0,0,0-1.28.61A5,5,0,0,1,4,11H6.14a1,1,0,0,0,0-2H2.51a.88.88,0,0,0-.28,0H2.17a.7.7,0,0,0-.14,0H2a1,1,0,0,0-.84,1v4a1,1,0,0,0,2,0v-.92a7,7,0,0,0,11.42-2.73A1,1,0,0,0,14,9.06Z"></path>
+          </svg>
+          <span>Reset passphrase</span>
+        </a>
+        <a href="https://kb.iu.edu/d/alpu" target="_blank" rel="noopener noreferrer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <g fill="currentColor">
+              <path d="M8,16a8,8,0,1,1,8-8A8,8,0,0,1,8,16ZM8,2a6,6,0,1,0,6,6A6,6,0,0,0,8,2Z"></path>
+              <path d="M8,10A1,1,0,0,1,7,9V8.25A1.25,1.25,0,0,1,8.25,7h.64A1.08,1.08,0,0,0,10,6.18,1,1,0,0,0,9,5H7A1,1,0,0,1,7,3H9a3,3,0,0,1,3,3.5A3.08,3.08,0,0,1,9,9H9A1,1,0,0,1,8,10Z"></path>
+              <path d="M8,13a1,1,0,0,1-.38-.08,1,1,0,0,1-.33-.21A1,1,0,0,1,7,12a1,1,0,0,1,.08-.38,1,1,0,0,1,.21-.33,1,1,0,0,1,.9-.27.62.62,0,0,1,.19.06.74.74,0,0,1,.18.09l.15.12a.93.93,0,0,1,.21.33,1,1,0,0,1-.21,1.09,1.16,1.16,0,0,1-.33.21A1,1,0,0,1,8,13Z"></path>
+            </g>
+          </svg>
+          <span>Get help</span>
+        </a>
+      </div>
+    </section>
+    <section id="guest-view" class="centered base" role="tabpanel" aria-labelledby="tab-guest" tabindex="0" hidden="hidden">
+      <div id="last-note" class="hide">
+        <p class="last-chose mt0-5">You last chose:</p>
+      </div>
+              <button id="email" class="button enter-email mt1" onclick="setCookieTab('guest');setCookieType(this.id);location.href='https://idp-guest.login.iu.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=http://iu.instructure.com/saml2&amp;shire=https://iu.instructure.com/login/saml';">
+                  Log in with email
+              </button>
+      <div id="with-hr" class="hr">
+        or <span class="hide-mobile">log in with</span>
+      </div>
+          <div class="options">
+            <button id="facebook" class="social facebook third" onclick="setCookieTab('guest');setCookieType(this.id);location.href='https://indiana.proxy.cirrusidentity.com/saml2/idp/SSOService.php?spentityid=http://iu.instructure.com/saml2&amp;ConsumerURL=https://iu.instructure.com/login/saml&amp;IDPList=https%3A%2F%2Ffacebook.cirrusidentity.com%2Fgateway';">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <g clip-path="url(#clip0)">
+                  <path d="M22.6759 0H1.32414C0.972955 0 0.636155 0.139507 0.387831 0.387831C0.139507 0.636155 0 0.972955 0 1.32414L0 22.6759C0 23.027 0.139507 23.3638 0.387831 23.6122C0.636155 23.8605 0.972955 24 1.32414 24H12.8276V14.7186H9.70345V11.0855H12.8276V8.41241C12.8276 5.3131 14.7228 3.62483 17.4869 3.62483C18.4184 3.6228 19.3493 3.66976 20.2759 3.76552V7.00552H18.3724C16.8662 7.00552 16.5724 7.71724 16.5724 8.76828V11.0814H20.1724L19.7048 14.7145H16.5517V24H22.6759C23.027 24 23.3638 23.8605 23.6122 23.6122C23.8605 23.3638 24 23.027 24 22.6759V1.32414C24 0.972955 23.8605 0.636155 23.6122 0.387831C23.3638 0.139507 23.027 0 22.6759 0V0Z" fill="white"></path>
+                </g>
+                <defs>
+                  <clipPath id="clip0">
+                    <rect width="24" height="24" fill="white"></rect>
+                  </clipPath>
+                </defs>
+              </svg>
+              <span class="button-copy"><span class="hide-non-mobile">Log in with </span>Facebook</span>
+            </button>
+            <button id="google" class="social google third" onclick="setCookieTab('guest');setCookieType(this.id);location.href='https://indiana.proxy.cirrusidentity.com/saml2/idp/SSOService.php?spentityid=http://iu.instructure.com/saml2&amp;ConsumerURL=https://iu.instructure.com/login/saml&amp;IDPList=https%3A%2F%2Fgoogle.cirrusidentity.com%2Fgateway'">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <rect width="24" height="24" fill="none"></rect>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M23.52 12.2729C23.52 11.422 23.4436 10.6038 23.3018 9.81836H12V14.4602H18.4582C18.18 15.9602 17.3345 17.2311 16.0636 18.082V21.0929H19.9418C22.2109 19.0038 23.52 15.9274 23.52 12.2729Z" fill="#4285F4"></path>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M11.9995 23.9998C15.2395 23.9998 17.9559 22.9252 19.9413 21.0925L16.0632 18.0816C14.9886 18.8016 13.6141 19.2271 11.9995 19.2271C8.87406 19.2271 6.22861 17.1161 5.28497 14.2798H1.27588V17.3889C3.25042 21.3107 7.30861 23.9998 11.9995 23.9998Z" fill="#34A853"></path>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M5.28545 14.2799C5.04545 13.5599 4.90909 12.7908 4.90909 11.9999C4.90909 11.209 5.04545 10.4399 5.28545 9.71993V6.61084H1.27636C0.463636 8.23084 0 10.0636 0 11.9999C0 13.9363 0.463636 15.769 1.27636 17.389L5.28545 14.2799Z" fill="#FBBC05"></path>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M11.9995 4.77273C13.7613 4.77273 15.3432 5.37818 16.5868 6.56727L20.0286 3.12545C17.9504 1.18909 15.2341 0 11.9995 0C7.30861 0 3.25042 2.68909 1.27588 6.61091L5.28497 9.72C6.22861 6.88364 8.87406 4.77273 11.9995 4.77273Z" fill="#EA4335"></path>
+              </svg>
+              <span class="button-copy"><span class="hide-non-mobile">Log in with </span>Google</span>
+            </button>
+            <button id="microsoft" class="social microsoft third" onclick="setCookieTab('guest');setCookieType(this.id);location.href='https://indiana.proxy.cirrusidentity.com/saml2/idp/SSOService.php?spentityid=http://iu.instructure.com/saml2&amp;ConsumerURL=https://iu.instructure.com/login/saml&amp;IDPList=https%3A%2F%2Fwin-live.cirrusidentity.com%2Fgateway'">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <rect x="13" width="11" height="11" fill="#7FBA00"></rect>
+                <rect width="11" height="11" fill="#F25022"></rect>
+                <rect x="13" y="13" width="11" height="11" fill="#FFB900"></rect>
+                <rect y="13" width="11" height="11" fill="#00A4EF"></rect>
+              </svg>
+              <span class="button-copy"><span class="hide-non-mobile">Log in with </span>Microsoft</span>
+            </button>
+          </div>
+        <div class="help">
+          <button id="seeOptions" class="button button--plain hide" onclick="showAllOptions()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 10" aria-hidden="true" focusable="false">
+              <title>Eye icon</title>
+                <g fill="currentColor">
+                  <path d="M8,10A9.87,9.87,0,0,1,.21,5.68a1.21,1.21,0,0,1,0-1.36A9.87,9.87,0,0,1,8,0,9.67,9.67,0,0,1,15.8,4.31h0a1.24,1.24,0,0,1,0,1.38A9.67,9.67,0,0,1,8,10ZM2.22,5A7.73,7.73,0,0,0,8,8a7.72,7.72,0,0,0,5.81-3A7.72,7.72,0,0,0,8,2,7.73,7.73,0,0,0,2.22,5Z"></path>
+                  <circle cx="8" cy="5" r="2"></circle>
+                </g>
+            </svg>
+            <span>See all login options</span>
+          </button>
+          <!--<button id="create" class="button button--plain" href="#" onclick="window.location.href = 'https://login.iu.edu/guest?entityId=http://iu.instructure.com/saml2&shire=https://iu.instructure.com/login/saml';">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <title>Circle plus</title>
+              <g fill="currentColor">
+                <path d="M11,7H9V5A1,1,0,0,0,7,5V7H5A1,1,0,0,0,5,9H7v2a1,1,0,0,0,2,0V9h2a1,1,0,0,0,0-2Z"/>
+                <path d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM8,14a6,6,0,1,1,6-6A6,6,0,0,1,8,14Z"/>
+              </g>
+            </svg>
+            <span>Create IU Guest account</span>
+          </button>-->
+          <a href="https://kb.iu.edu/d/alpu" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon1" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <g fill="currentColor">
+                <path d="M8,16a8,8,0,1,1,8-8A8,8,0,0,1,8,16ZM8,2a6,6,0,1,0,6,6A6,6,0,0,0,8,2Z"></path>
+                <path d="M8,10A1,1,0,0,1,7,9V8.25A1.25,1.25,0,0,1,8.25,7h.64A1.08,1.08,0,0,0,10,6.18,1,1,0,0,0,9,5H7A1,1,0,0,1,7,3H9a3,3,0,0,1,3,3.5A3.08,3.08,0,0,1,9,9H9A1,1,0,0,1,8,10Z"></path>
+                <path d="M8,13a1,1,0,0,1-.38-.08,1,1,0,0,1-.33-.21A1,1,0,0,1,7,12a1,1,0,0,1,.08-.38,1,1,0,0,1,.21-.33,1,1,0,0,1,.9-.27.62.62,0,0,1,.19.06.74.74,0,0,1,.18.09l.15.12a.93.93,0,0,1,.21.33,1,1,0,0,1-.21,1.09,1.16,1.16,0,0,1-.33.21A1,1,0,0,1,8,13Z"></path>
+              </g>
+            </svg>
+            <span>Get help</span>
+          </a>
+        </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="footer-group">
+      <p><a href="https://www.iu.edu/copyright/index.html" target="_blank">Copyright</a> © 2021 The Trustees of <a href="http://www.iu.edu/" target="_blank">Indiana University</a>.</p>
+    </div>
+  </footer>
+
+
+</body></html>

